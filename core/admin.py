@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import AdminSite, ModelAdmin, TabularInline
 
-from core.models import Organisation, Client, Pays, DocumentIdentification, Personne
+from core.models import Organisation, Client, Pays, DocumentIdentification, Personne, Classe, ServiceClasse, Service
+from hebergement.models import Agent
 
 # Configure AdminSite ...
 AdminSite.site_header = 'SYSTEME DE GESTION D\'HOTEL'
@@ -17,6 +18,11 @@ class PersonneConfig(ModelAdmin):
 
 @admin.register(Client)
 class ClientConfig(ModelAdmin):
+    list_display = ['nom', 'prenom']
+
+
+@admin.register(Agent)
+class AgentConfig(ModelAdmin):
     list_display = ['nom', 'prenom']
 
 
@@ -39,3 +45,18 @@ class MembreInline(TabularInline):
 class OrganisationConfig(ModelAdmin):
     list_display = ['designation', 'contact']
     inlines = [MembreInline]
+
+
+@admin.register(Classe)
+class ClasseConfig(ModelAdmin):
+    list_display = ['designation']
+
+
+@admin.register(Service)
+class ServiceConfig(ModelAdmin):
+    list_display = ['type']
+
+
+@admin.register(ServiceClasse)
+class ServiceClasseConfig(ModelAdmin):
+    list_display = ['classe', 'service', 'prix']

@@ -1,7 +1,8 @@
 import datetime
+from abc import abstractmethod
 
 from django.db import models
-from django.db.models import CharField, DateField, ForeignKey, CASCADE, OneToOneField
+from django.db.models import CharField, DateField, ForeignKey, CASCADE, OneToOneField, EmailField, FloatField
 
 SEXE = (
     ('M', 'MASCULIN'),
@@ -53,6 +54,8 @@ class Personne(models.Model):
     date_naissance = DateField(default=datetime.date.today()-datetime.timedelta(6574), verbose_name='date de naissance')
     pays = ForeignKey(Pays, on_delete=CASCADE, related_name='citoyens')
     document_identification = OneToOneField(DocumentIdentification, on_delete=CASCADE)
+    tel = CharField(max_length=20, verbose_name='téléphone', null=True, blank=True)
+    email = EmailField(verbose_name='courrier éléctronique', null=True, blank=True)
 
     def age(self):
         years = 0
@@ -81,3 +84,41 @@ class Client(Personne):
 
     def __str__(self):
         return super().__str__()
+
+
+class Classe(models.Model):
+    designation = CharField(max_length=1000, verbose_name='désignation')
+
+    def __str__(self):
+        return f'Classe {self.designation}' if self is not None else ''
+
+
+TYPE_SERVICE = (
+    ('HBG', 'Hébergement'),
+    ('ACL', 'Accueil'),
+    ('RST', 'Restauration'),
+    ('TSP', 'Transport'),
+    ('DVR', 'Divers'),
+)
+
+
+class Service(models.Model):
+    type = CharField(max_length=3, choices=TYPE_SERVICE)
+
+    def __str__(self):
+        return f'Service {self.type}' if self is not None else ''
+
+    @abstractmethod
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        pass
+
+
+class ServiceClasse(models.Model):
+    classe = ForeignKey(Classe, on_delete=CASCADE)
+    service = ForeignKey(Service, on_delete=CASCADE)
+    prix = FloatField(default=0)
+
+    def __str__(self):
+        return f'Service {self.service} coûte {self.prix} en classe {self.classe}' if self is not None else ''
+
+
