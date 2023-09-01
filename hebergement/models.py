@@ -48,7 +48,6 @@ class Reservation(models.Model):
         return f'{self.num}' if self is not None else ''
 
 
-
 TYPE_CHAMBRE = (
     ('IDV', 'Individuelle (1 lit)'),
     ('DXL', 'Double (2 lits)'),
@@ -62,7 +61,10 @@ STATUT_CHAMBRE = (
     ('C', 'Reservation Confirmée'),
     ('T', 'Reservation Terminée'),
     ('O', 'Check-out'),
+    ('N', 'Nettoyage'),
+    ('M', 'Maintenance'),
 )
+
 
 class Chambre(Service):
     num = CharField(max_length=25, verbose_name="numéro de chambre")
@@ -95,7 +97,7 @@ TYPE_SALLE = (
 )
 
 
-class Salle(models.Model):
+class Salle(Service):
     designation = CharField(max_length=25, verbose_name="désignation de la salle")
     type_salle = CharField(max_length=3, choices=TYPE_SALLE, verbose_name='type de salle')
     info_sup = TextField(blank=True, null=True, verbose_name='Informations Supplémentaires')
@@ -103,12 +105,16 @@ class Salle(models.Model):
     def __str__(self):
         return f'Salle {self.designation}' if self is not None else ''
 
+    def save(self, *args, **kwargs):
+        self.type = 'ACL'
+        super().save(*args, **kwargs)
+
 
 class ReservationSalle(models.Model):
-    reservation = ForeignKey(Reservation, on_delete=CASCADE, verbose_name='réservation')
     salle = ForeignKey(Chambre, on_delete=CASCADE, verbose_name='salle')
     date_debut = DateTimeField(verbose_name='Date de debut')
     date_fin = DateTimeField(verbose_name='Date de fin')
+    reservation = ForeignKey(Reservation, on_delete=CASCADE, verbose_name='réservation')
 
     def __str__(self):
         return f'Réservation {self.reservation} pour {self.salle} de {self.date_debut} à {self.fin}' if self is not None else ''

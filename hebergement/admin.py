@@ -15,6 +15,8 @@ class ReservationConfig(ModelAdmin):
     #     (None, { 'fields' : ('num', 'status', 'classe',)},
     # ),
     # }
+    class Media:
+        js = ['js/reservation.js']
 
 @admin.register(Chambre)
 class ChambreConfig(ModelAdmin):
