@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import CharField, IntegerField, PositiveSmallIntegerField, DateField, ForeignKey, CASCADE, \
     TextField, BooleanField, DateTimeField, ManyToManyField
 
-from core.models import Personne, Service, Classe
+from core.models import Personne, Service, Classe, TypeService
 
 STATUT_RESERVATION = (
     ('B', 'Brouillon'),
@@ -38,7 +38,7 @@ class Reservation(models.Model):
     nbr_adultes = PositiveSmallIntegerField(verbose_name="nombre d'adultes")
     nbr_enfants = PositiveSmallIntegerField(verbose_name="nombre d'enfants")
     date_commande = DateField(default=timezone.now(), verbose_name='date de la commande')
-    services_inclus = ManyToManyField(Service, verbose_name='services inclus')
+    services_inclus = ManyToManyField(TypeService,blank=True, null=True, verbose_name='services inclus')
     a_travers = CharField(max_length=1, choices=SOURCES_RESERVATION, default='S')
     agent = ForeignKey(Agent, on_delete=CASCADE, null=True, blank=True, related_name='reservations_effectuees')
     notes = TextField(null=True, blank=True)
@@ -65,7 +65,15 @@ STATUT_CHAMBRE = (
     ('M', 'Maintenance'),
 )
 
-
+STATUT_SALLE = (
+    ('L', 'Libre'),
+    ('B', 'Reservation Brouillon'),
+    ('C', 'Reservation Confirmée'),
+    ('T', 'Reservation Terminée'),
+    ('O', 'Check-out'),
+    ('N', 'Nettoyage'),
+    ('M', 'Maintenance'),
+)
 class Chambre(Service):
     num = CharField(max_length=25, verbose_name="numéro de chambre")
     type_chambre = CharField(max_length=3, choices=TYPE_CHAMBRE, verbose_name='type de chambre')
@@ -76,7 +84,7 @@ class Chambre(Service):
         return f'Chambre n° {self.num}' if self is not None else ''
 
     def save(self, *args, **kwargs):
-        self.type = 'HBG'
+        self.type = Service.objects.filter(type__designation__iexact='hébergement')
         super().save(*args, **kwargs)
 
 
@@ -101,12 +109,13 @@ class Salle(Service):
     designation = CharField(max_length=25, verbose_name="désignation de la salle")
     type_salle = CharField(max_length=3, choices=TYPE_SALLE, verbose_name='type de salle')
     info_sup = TextField(blank=True, null=True, verbose_name='Informations Supplémentaires')
+    statut = CharField(max_length=1, choices=STATUT_SALLE, default='L')
 
     def __str__(self):
         return f'Salle {self.designation}' if self is not None else ''
 
     def save(self, *args, **kwargs):
-        self.type = 'ACL'
+        self.type = Service.objects.filter(type__designation__iexact='accueil')
         super().save(*args, **kwargs)
 
 

@@ -1,3 +1,8 @@
 #header {
     background-color: mediumpurple;
 }
+
+#nav-main > a
+{
+    margin: 20px;
+}

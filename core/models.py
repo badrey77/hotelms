@@ -1,5 +1,6 @@
 import datetime
 from abc import abstractmethod
+from tkinter import CASCADE
 
 from django.db import models
 from django.db.models import CharField, DateField, ForeignKey, CASCADE, OneToOneField, EmailField, FloatField
@@ -26,7 +27,7 @@ class DocumentIdentification(models.Model):
 
     def __str__(self):
         if self:
-            return f'{self.nom} ({self.abbr}, {self.code})'
+            return f'{self.num_doc} ({self.type_document}, {self.valide_jusqua})'
         return ''
 
     class Meta:
@@ -93,17 +94,15 @@ class Classe(models.Model):
         return f'Classe {self.designation}' if self is not None else ''
 
 
-TYPE_SERVICE = (
-    ('HBG', 'Hébergement'),
-    ('ACL', 'Accueil'),
-    ('RST', 'Restauration'),
-    ('TSP', 'Transport'),
-    ('DVR', 'Divers'),
-)
+class TypeService(models.Model):
+    designation = CharField(max_length=1000, verbose_name='désignation')
+
+    def __str__(self):
+        return f'{self.designation}' if self is not None else ''
 
 
 class Service(models.Model):
-    type = CharField(max_length=3, choices=TYPE_SERVICE)
+    type = ForeignKey(TypeService, on_delete=CASCADE, verbose_name='type de service')
 
     def __str__(self):
         return f'Service {self.type}' if self is not None else ''
@@ -115,7 +114,7 @@ class Service(models.Model):
 
 class ServiceClasse(models.Model):
     classe = ForeignKey(Classe, on_delete=CASCADE)
-    service = ForeignKey(Service, on_delete=CASCADE)
+    service = ForeignKey(TypeService, on_delete=CASCADE, verbose_name='type de service')
     prix = FloatField(default=0)
 
     def __str__(self):

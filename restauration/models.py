@@ -12,7 +12,7 @@ class Restaurant(Service):
         return f'Salle {self.designation}' if self is not None else ''
 
     def save(self, *args, **kwargs):
-        self.type = 'RST'
+        self.type = Service.objects.filter(type__designation__iexact='restauration')
         super().save(*args, **kwargs)
 
 

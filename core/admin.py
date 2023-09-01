@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import AdminSite, ModelAdmin, TabularInline
 
-from core.models import Organisation, Client, Pays, DocumentIdentification, Personne, Classe, ServiceClasse, Service
+from core.models import Organisation, Client, Pays, DocumentIdentification, Personne, Classe, ServiceClasse, Service, \
+    TypeService
 from hebergement.models import Agent
 
 # Configure AdminSite ...
@@ -14,15 +15,11 @@ AdminSite.index_title = 'ACCUEIL'
 @admin.register(Personne)
 class PersonneConfig(ModelAdmin):
     list_display = ['nom', 'prenom']
+    search_fields = ['nom', 'prenom']
 
 
 @admin.register(Client)
 class ClientConfig(ModelAdmin):
-    list_display = ['nom', 'prenom']
-
-
-@admin.register(Agent)
-class AgentConfig(ModelAdmin):
     list_display = ['nom', 'prenom']
 
 
@@ -47,16 +44,28 @@ class OrganisationConfig(ModelAdmin):
     inlines = [MembreInline]
 
 
-@admin.register(Classe)
-class ClasseConfig(ModelAdmin):
+@admin.register(TypeService)
+class TypeServiceConfig(ModelAdmin):
     list_display = ['designation']
 
 
-@admin.register(Service)
-class ServiceConfig(ModelAdmin):
-    list_display = ['type']
+# @admin.register(Service)
+# class ServiceConfig(ModelAdmin):
+#     list_display = ['type']
 
 
-@admin.register(ServiceClasse)
-class ServiceClasseConfig(ModelAdmin):
-    list_display = ['classe', 'service', 'prix']
+# @admin.register(ServiceClasse)
+# class ServiceClasseConfig(ModelAdmin):
+#     list_display = ['classe', 'service', 'prix']
+
+
+class ServiceClasseInline(TabularInline):
+    model = ServiceClasse
+    verbose_name = 'tarification du service'
+    verbose_name_plural = 'tarifications de services'
+
+
+@admin.register(Classe)
+class ClasseConfig(ModelAdmin):
+    list_display = ['designation']
+    inlines = [ServiceClasseInline]
