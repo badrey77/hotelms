@@ -1,0 +1,95 @@
+{% extends 'admin/app_index.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block bodyclass %}{{ block.super }} app-{{ app_label }}{% endblock %}
+
+{% block nav-breadcrumbs %}
+  <nav aria-label="{% translate 'Breadcrumbs' %}">
+    <div class="breadcrumbs">
+      <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+      &rsaquo;
+      {% for app in app_list %}
+        {{ app.name }}
+      {% endfor %}
+    </div>
+  </nav>
+{% endblock %}
+
+{% block content %}
+    <table style="width: max-content; user-select: none;">
+    <caption>
+        <th>N° de chambre</th>
+        {% for j in jours %}
+        <th style="width: fit-content">{{ j|date:'D'}}</th>
+        {% endfor %}
+    </caption>
+{% for chambre in chambres %}
+    <tr>
+        <td>{{ chambre }}</td><td colspan="30">
+        {% for reservation in chambre.jours %}
+            <svg style="width: 34px; height:34px; user-select: none;">
+                <rect id="rect_{{ chambre.num }}" class="rectL {% if reservation.status == 'B' %}rect_B{% endif %}
+                            {% if reservation.status == 'C' %}rect_C{% endif %}
+                            {% if reservation.status == 'T' %}rect_T{% endif %}
+                            {% if reservation.status == 'O' %}rect_O{% endif %}
+                            {% if reservation.status == 'N' %}rect_N{% endif %}
+                            {% if reservation.status == 'M' %}rect_M{% endif %}" />
+            </svg>
+        {% endfor %}</td>
+    </tr>
+{% endfor %}
+        <script src="{% static 'js/jquery.min.js' %}"></script>
+        <script src="{% static 'js/jquery-ui.min.js' %}"></script>
+        <script src="{% static 'js/calendar.js' %}"></script>
+    </table>
+    <div style="margin-top: 30px">
+        <label ><strong>Légende:</strong></label>
+    </div>
+    <table>
+        <tr>
+            <td>
+                <label><strong>Libre</strong></label>
+                <svg style="width: 34px; height:34px; user-select: none;">
+                    <rect id="legende_L" class="rectL" />
+                </svg>
+            </td>
+            <td>
+                <label><strong>Brouillon</strong></label>
+                <svg style="width: 34px; height:34px; user-select: none;">
+                    <rect id="legende_B" class="rect_B" />
+                </svg>
+            </td>
+                        <td>
+                <label><strong>Confirmée</strong></label>
+                <svg style="width: 34px; height:34px; user-select: none;">
+                    <rect id="legende_C" class="rect_C" />
+                </svg>
+            </td>
+            <td>
+                <label><strong>Terminée</strong></label>
+                <svg style="width: 34px; height:34px; user-select: none;">
+                    <rect id="legende_T" class="rect_T" />
+                </svg>
+            </td>
+            <td>
+                <label><strong>Check-out</strong></label>
+                <svg style="width: 34px; height:34px; user-select: none;">
+                    <rect id="legende_O" class="rect_O" />
+                </svg>
+            </td>
+            <td>
+                <label><strong>Nettoyage</strong></label>
+                <svg style="width: 34px; height:34px; user-select: none;">
+                    <rect id="legende_N" class="rect_N" />
+                </svg>
+            </td>
+            <td>
+                <label><strong>Maintenance</strong></label>
+                <svg style="width: 34px; height:34px; user-select: none;">
+                    <rect id="legende_M" class="rect_M" />
+                </svg>
+            </td>
+        </tr>
+    </table>
+{% endblock %}

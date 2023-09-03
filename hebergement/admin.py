@@ -1,7 +1,11 @@
+import datetime
+from datetime import timedelta
+
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin, TabularInline
 
-from hebergement.models import Reservation, Chambre, Agent, ReservationChambre, ReservationSalle, Salle
+from hebergement.models import Reservation, Chambre, Agent, ReservationChambre, ReservationSalle, Salle, STATUS_CHAMBRE, \
+    Section
 
 
 @admin.register(Agent)
@@ -11,14 +15,41 @@ class AgentConfig(ModelAdmin):
 
 @admin.register(Chambre)
 class ChambreConfig(ModelAdmin):
-    list_display = ['num', 'type_chambre', 'statut']
-    #fields = ['num', 'type_chambre', 'statut','info_sup']
+    list_display = ['num', 'type_chambre', 'status']
     search_fields = ['num']
+    list_filter = ['section', 'type_chambre', 'status']
+
+    def get_readonly_fields(self, request, obj=None):
+        rof = []
+        for i in range(7):
+            day = datetime.date.today() + timedelta(days=i)
+
+            res = ReservationChambre.objects.filter(chambre_id=obj.id,
+                                                       date_checkin__lte=day,
+                                                       date_checkout__gt=day)
+
+            if res.count() > 0:
+                print(res)
+                foo = lambda self: res.first().reservation.status
+            else:
+                print('L')
+                foo = lambda self: 'L'
+
+            foo.short_description = (day.strftime('%A'))
+            rof.append(foo.short_description)
+            setattr(self, foo.short_description, foo)
+        return rof
+
+
+@admin.register(Section)
+class SectionConfig(ModelAdmin):
+    list_display = ['designation']
+    search_fields = ['designation']
 
 
 @admin.register(Salle)
 class SalleConfig(ModelAdmin):
-    list_display = ['designation', 'type_salle', 'statut']
+    list_display = ['designation', 'type_salle', 'status']
     search_fields = ['designation']
 
 
@@ -36,14 +67,14 @@ class ReservationSalleInline(TabularInline):
 
 @admin.register(Reservation)
 class ReservationConfig(ModelAdmin):
-    list_display = ['num', 'demandeur','date_commande','statut']
+    list_display = ['num', 'demandeur','date_commande','status']
     filter_horizontal = ['services_inclus']
     autocomplete_fields = ['demandeur']
     search_fields = ['num', 'demandeur']
-    list_filter = ['date_commande','statut']
+    list_filter = ['date_commande','status']
     fieldsets = (
         (None, {
-            'fields': (('num','statut', 'classe'),)
+            'fields': (('num','status', 'classe'),)
         }),
         ('Au profit de', {
             'fields': (('demandeur', 'nbr_adultes', 'nbr_enfants'),)
@@ -71,6 +102,21 @@ class ReservationConfig(ModelAdmin):
         if obj.services_inclus.filter(designation__iexact='accueil'):
             inline.append(ReservationSalleInline)
         return inline
+
+    def changelist_view(self, request, extra_context=None):
+        jours = [datetime.date.today() + timedelta(days=x) for x in range(30)]
+        chambres = []
+        for ch in Chambre.objects.all():
+            ch.jours = ch.reservations()
+            chambres.append(ch)
+        extra_context = {
+            'app_list': [
+                { 'name' : 'Hebergement'},
+            ],
+            'chambres' : chambres,
+            'jours' : jours
+        }
+        return super().changelist_view(request, extra_context)
 
     class Media:
         js = [

@@ -107,10 +107,6 @@ class Service(models.Model):
     def __str__(self):
         return f'Service {self.type}' if self is not None else ''
 
-    @abstractmethod
-    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-        pass
-
 
 class ServiceClasse(models.Model):
     classe = ForeignKey(Classe, on_delete=CASCADE)

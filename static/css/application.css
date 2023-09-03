@@ -6,3 +6,49 @@
 {
     margin: 20px;
 }
+
+.rectL {
+    fill: lightblue;
+    width: 100%;
+    height: 100%;
+}
+
+.rect_B {
+    fill: gray;
+    width: 100%;
+    height: 100%;
+}
+
+.rect_C {
+    fill: lightgreen;
+    width: 100%;
+    height: 100%;
+}
+
+.rect_T {
+    fill: green;
+    width: 100%;
+    height: 100%;
+}
+
+.rect_O {
+    fill: yellow;
+    width: 100%;
+    height: 100%;
+}
+
+.rect_N {
+    fill: purple;
+    width: 100%;
+    height: 100%;
+}
+
+.rect_M {
+    fill: red;
+    width: 100%;
+    height: 100%;
+}
+
+rect.selected {
+    border: solid black 2px;
+}
