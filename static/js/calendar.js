@@ -13,7 +13,12 @@ $(document).ready(function() {
         });
         $(this).hover(function (e) {
             if(e.buttons == 1){
-                $(this).addClass('rect_B');
+                var selectedOption = $("rect.selected").first()[0];
+                console.log(selectedOption.id)
+                switch (selectedOption) {
+                    case "rect_B":
+                        $(this).addClass('rect_B');
+                }
             }
         }, function (e) {
 
