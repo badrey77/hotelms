@@ -68,7 +68,7 @@ class ReservationSalleInline(TabularInline):
 @admin.register(Reservation)
 class ReservationConfig(ModelAdmin):
     list_display = ['num', 'demandeur','date_commande','status']
-    filter_horizontal = ['services_inclus']
+    filter_horizontal = ['services_inclus','personnes']
     autocomplete_fields = ['demandeur']
     search_fields = ['num', 'demandeur']
     list_filter = ['date_commande','status']
@@ -77,7 +77,7 @@ class ReservationConfig(ModelAdmin):
             'fields': (('num','status', 'classe'),)
         }),
         ('Au profit de', {
-            'fields': (('demandeur', 'nbr_adultes', 'nbr_enfants'),)
+            'fields': (('demandeur', 'nbr_adultes', 'nbr_enfants', 'personnes'),)
         }),
         ('Informations Suplémentaires', {
             'fields': (('date_commande', 'a_travers', 'agent'),)

@@ -1,0 +1,150 @@
+@startuml
+
+!define EntityType class
+!define IdType Field
+!define EnumType enum
+!define RelatedType "1..1"
+!define ForeignKeyType "1..*"
+
+package "core" {
+
+    EntityType Personne {
+        +nom: CharField
+        +prenom: CharField
+        +sexe: CharField
+        +date_naissance: DateField
+        +pays: ForeignKey(Pays)
+        +document_identification: OneToOneField(DocumentIdentification)
+        +tel: CharField
+        +email: EmailField
+        +age(): int
+    }
+
+    EntityType Client  {
+        +appartenance: ForeignKey(Organisation)
+    }
+
+    EntityType Organisation  {
+        +designation: CharField
+        +abbr: CharField
+        +contact: CharField
+    }
+
+    EntityType DocumentIdentification  {
+        +num_doc: CharField
+        +type_document: CharField
+        +num_id: CharField
+        +date_delivrance: DateField
+        +valide_jusqua: DateField
+        +autorite: CharField
+    }
+
+    EntityType Pays {
+        +nom: CharField
+        +abbr: CharField
+        +code: CharField
+    }
+
+    EntityType TypeService {
+        +designation: CharField
+    }
+
+   EntityType  Service {
+        +type: ForeignKey(TypeService)
+    }
+
+    EntityType Classe {
+        +designation: CharField
+    }
+
+    EntityType ServiceClasse {
+        +classe: ForeignKey(Classe)
+        +service: ForeignKey(TypeService)
+        +prix: FloatField
+    }
+
+    Client -up-|> Personne
+    Personne "1" -up-o "1" DocumentIdentification
+    Personne }-up-o Pays : appartient
+    Client }--* Organisation
+    Service }-up- TypeService
+    ServiceClasse }--o Classe
+    ServiceClasse }--o TypeService
+
+}
+
+
+package "hebergment" {
+
+     EntityType Agent{
+        +reference: CharField
+        +contact: CharField
+    }
+
+     EntityType Reservation {
+        +num: CharField
+        +status: CharField
+        +classe: ForeignKey(Classe)
+        +demandeur: ForeignKey(Personne)
+        +nbr_adultes: PositiveSmallIntegerField
+        +nbr_enfants: PositiveSmallIntegerField
+        +date_commande: DateField
+        +services_inclus: ManyToManyField(TypeService)
+        +a_travers: CharField
+        +agent: ForeignKey(Agent)
+        +notes: TextField
+        +pickup: BooleanField
+        +save(): void
+    }
+
+     EntityType Section {
+        +designation: CharField
+    }
+
+
+    EntityType Chambre {
+        +num: CharField
+        +section: ForeignKey(Section)
+        +type_chambre: CharField
+        +info_sup: TextField
+        +status: CharField
+        +reservations(date: Date, days: int): list
+    }
+
+     EntityType ReservationChambre {
+        +reservation: ForeignKey(Reservation)
+        +chambre: ForeignKey(Chambre)
+        +date_checkin: DateField
+        +date_checkout: DateField
+    }
+
+
+     EntityType Salle {
+        +designation: CharField
+        +type_salle: CharField
+        +info_sup: TextField
+        +status: CharField
+    }
+
+     EntityType ReservationSalle {
+        +salle: ForeignKey(Chambre)
+        +date_debut: DateTimeField
+        +date_fin: DateTimeField
+        +reservation: ForeignKey(Reservation)
+    }
+
+    Agent -|> Personne
+    Salle -|> Service
+    Chambre -|> Service
+    Reservation }- Classe
+    Reservation }- Personne : "concerner"
+    Reservation }-{ TypeService
+    Reservation }--o Agent : "à travers"
+    Section }--o Chambre
+    ReservationChambre }--o Reservation
+    ReservationChambre }--o Chambre
+    ReservationSalle }--o Reservation
+    ReservationSalle }--o Chambre
+    ReservationChambre }-{ Client
+}
+@enduml

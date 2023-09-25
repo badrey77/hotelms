@@ -6,7 +6,7 @@ from django.db import models
 from django.db.models import CharField, IntegerField, PositiveSmallIntegerField, DateField, ForeignKey, CASCADE, \
     TextField, BooleanField, DateTimeField, ManyToManyField, DO_NOTHING
 
-from core.models import Personne, Service, Classe, TypeService
+from core.models import Personne, Service, Classe, TypeService, Client
 
 STATUS_RESERVATION = (
     ('B', 'Brouillon'),
@@ -44,6 +44,7 @@ class Reservation(models.Model):
     agent = ForeignKey(Agent, on_delete=CASCADE, null=True, blank=True, related_name='reservations_effectuees')
     notes = TextField(null=True, blank=True)
     pickup = BooleanField(default=False,verbose_name='nécessite un transfert (pickup)?')
+    personnes = ManyToManyField(Client, blank=True, null=True, verbose_name='Liste des personnes')
 
     def __str__(self):
         return f'{self.num}' if self is not None else ''
