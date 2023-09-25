@@ -1,0 +1,85 @@
+@startuml
+
+!define EntityType class
+!define IdType Field
+!define EnumType enum
+!define RelatedType "1..1"
+!define ForeignKeyType "1..*"
+
+package "hebergment" {
+
+     EntityType Agent{
+        +reference: CharField
+        +contact: CharField
+    }
+
+     EntityType Reservation {
+        +num: CharField
+        +status: CharField
+        +classe: ForeignKey(Classe)
+        +demandeur: ForeignKey(Personne)
+        +nbr_adultes: PositiveSmallIntegerField
+        +nbr_enfants: PositiveSmallIntegerField
+        +date_commande: DateField
+        +services_inclus: ManyToManyField(TypeService)
+        +a_travers: CharField
+        +agent: ForeignKey(Agent)
+        +notes: TextField
+        +pickup: BooleanField
+        +save(): void
+    }
+
+     EntityType Section {
+        +designation: CharField
+    }
+
+
+    EntityType Chambre {
+        +num: CharField
+        +section: ForeignKey(Section)
+        +type_chambre: CharField
+        +info_sup: TextField
+        +status: CharField
+        +reservations(date: Date, days: int): list
+    }
+
+     EntityType ReservationChambre {
+        +reservation: ForeignKey(Reservation)
+        +chambre: ForeignKey(Chambre)
+        +date_checkin: DateField
+        +date_checkout: DateField
+    }
+
+
+     EntityType Salle {
+        +designation: CharField
+        +type_salle: CharField
+        +info_sup: TextField
+        +status: CharField
+    }
+
+     EntityType ReservationSalle {
+        +salle: ForeignKey(Chambre)
+        +date_debut: DateTimeField
+        +date_fin: DateTimeField
+        +reservation: ForeignKey(Reservation)
+    }
+
+    Agent -|> Personne
+    Service <|-down- Chambre
+    Salle -up-|> Service
+    Agent }-up-o Personne
+    Reservation }-down-o Classe
+    Reservation }-up-o Personne
+    Reservation }-up-o TypeService
+    Reservation }-up-o Agent
+    Section }--o Chambre
+    Salle }-right-o TypeService
+    Chambre }--o TypeService
+    ReservationChambre }--o Reservation
+    ReservationChambre }--o Chambre
+    ReservationSalle }--o Reservation
+    ReservationSalle }--o Chambre
+}
+
+@enduml
