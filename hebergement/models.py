@@ -132,6 +132,7 @@ class ReservationChambre(models.Model):
     chambre = ForeignKey(Chambre, on_delete=CASCADE, verbose_name='chambre')
     date_checkin = DateField(null=True, blank=True, verbose_name='Date de check-in')
     date_checkout = DateField(null=True, blank=True, verbose_name='Date de check-out')
+    personnes = ManyToManyField(Client, null=True, blank=True)
 
     def __str__(self):
         return f'Réservation {self.reservation} pour {self.chambre}' if self is not None else ''

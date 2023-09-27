@@ -2,7 +2,7 @@ import datetime
 from datetime import timedelta
 
 from django.contrib import admin
-from django.contrib.admin import ModelAdmin, TabularInline
+from django.contrib.admin import ModelAdmin, TabularInline, StackedInline
 
 from hebergement.models import Reservation, Chambre, Agent, ReservationChambre, ReservationSalle, Salle, STATUS_CHAMBRE, \
     Section
@@ -53,10 +53,10 @@ class SalleConfig(ModelAdmin):
     search_fields = ['designation']
 
 
-class ReservationChambreInline(TabularInline):
+class ReservationChambreInline(StackedInline):
     model = ReservationChambre
     extra = 0
-    autocomplete_fields = ["chambre"]
+    autocomplete_fields = ["chambre", "personnes"]
 
 
 class ReservationSalleInline(TabularInline):

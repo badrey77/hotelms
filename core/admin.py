@@ -21,6 +21,7 @@ class PersonneConfig(ModelAdmin):
 @admin.register(Client)
 class ClientConfig(ModelAdmin):
     list_display = ['nom', 'prenom']
+    search_fields = ['nom', 'prenom']
 
 
 @admin.register(Pays)
