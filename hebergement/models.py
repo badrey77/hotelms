@@ -103,6 +103,7 @@ class Chambre(Service):
     type_chambre = CharField(max_length=3, choices=TYPE_CHAMBRE, verbose_name='type de chambre')
     info_sup = TextField(blank=True, null=True, verbose_name='Informations Supplémentaires')
     status = CharField(max_length=1, choices=STATUS_CHAMBRE, default='L')
+    capacite = IntegerField(default=1, verbose_name='capacité')
 
     def __str__(self):
         return f'Chambre n° {self.num}' if self is not None else ''
@@ -124,6 +125,7 @@ class Chambre(Service):
                 results.append({'pk': "#", 'status': 'L'})
 
         return results
+
 
 
 

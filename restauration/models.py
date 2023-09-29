@@ -5,6 +5,7 @@ from core.models import Service, TypeService
 from hebergement.models import Reservation, Chambre
 
 
+
 class Restaurant(Service):
     designation = CharField(max_length=25, verbose_name="désignation")
 
@@ -21,6 +22,8 @@ class ReservationRestaurant(models.Model):
     restaurant = ForeignKey(Restaurant, on_delete=CASCADE, verbose_name='restaurant')
     montant = FloatField(default=0)
 
-
     def __str__(self):
         return f'Le client de #{self.reservation}# a mangé à/au  {self.restaurant}' if self is not None else ''
+
+
+

@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    "hotelms.apps.MyAdminConfig",
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'hebergement.apps.HebergementConfig',
     'restauration.apps.RestaurationConfig',
+    'portail.apps.PortailConfig',
 ]
 
 MIDDLEWARE = [

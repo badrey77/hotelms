@@ -1,17 +1,14 @@
+from django.apps.registry import Apps
 from django.contrib import admin
 from django.contrib.admin import AdminSite, ModelAdmin, TabularInline
+from django.contrib.admin.sites import DefaultAdminSite
 
+from core.forms import CalendarForm
 from core.models import Organisation, Client, Pays, DocumentIdentification, Personne, Classe, ServiceClasse, Service, \
     TypeService
 from hebergement.models import Agent
 
-# Configure AdminSite ...
-AdminSite.site_header = 'SYSTEME DE GESTION D\'HOTEL'
-AdminSite.site_title = 'SGH'
-AdminSite.index_title = 'ACCUEIL'
 
-
-# Administration de l'appli : Core App ...
 @admin.register(Personne)
 class PersonneConfig(ModelAdmin):
     list_display = ['nom', 'prenom']

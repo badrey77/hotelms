@@ -1,0 +1,77 @@
+{% load i18n %}
+{% load custom_tags %}
+
+{% if app_list %}
+    <div class="app-{{ app_list.first.app_label }} module{% if app_list.first.app_url in request.path|urlencode %} current-app{% endif %}">
+      <table>
+      <caption>
+          <div style="font-size: larger">1> Accès Rapide</div>
+        </caption>
+      {% for app in app_list %}
+            {% for model in app.models %}
+                {% if model|fav_model %}
+                    <tr class="model-{{ model.object_name|lower }}{% if model.admin_url in request.path|urlencode %} current-model{% endif %}">
+                {% if model.admin_url %}
+                  <th scope="row"><a href="{{ model.admin_url }}"{% if model.admin_url in request.path|urlencode %} aria-current="page"{% endif %}>{{ model.name }}</a></th>
+                {% else %}
+                  <th scope="row">{{ model.name }}</th>
+                {% endif %}
+
+                {% if model.add_url %}
+                  <td><a href="{{ model.add_url }}" class="addlink">{% translate 'Add' %}</a></td>
+                {% else %}
+                  <td></td>
+                {% endif %}
+
+                {% if model.admin_url and show_changelinks %}
+                  {% if model.view_only %}
+                    <td><a href="{{ model.admin_url }}" class="viewlink">{% translate 'View' %}</a></td>
+                  {% else %}
+                    <td><a href="{{ model.admin_url }}" class="changelink">{% translate 'Change' %}</a></td>
+                  {% endif %}
+                {% elif show_changelinks %}
+                  <td></td>
+                {% endif %}
+              </tr>
+                {% endif %}
+            {% endfor %}
+      {% endfor %}
+      </table>
+    <table>
+        <caption>
+          <div style="font-size: larger">2> Autres Options</div>
+        </caption>
+      {% for app in app_list %}
+            {% for model in app.models %}
+                {% if model|fav_model %}{% else %}
+                    <tr class="model-{{ model.object_name|lower }}{% if model.admin_url in request.path|urlencode %} current-model{% endif %}">
+                {% if model.admin_url %}
+                  <th scope="row"><a href="{{ model.admin_url }}"{% if model.admin_url in request.path|urlencode %} aria-current="page"{% endif %}>{{ model.name }}</a></th>
+                {% else %}
+                  <th scope="row">{{ model.name }}</th>
+                {% endif %}
+
+                {% if model.add_url %}
+                  <td><a href="{{ model.add_url }}" class="addlink">{% translate 'Add' %}</a></td>
+                {% else %}
+                  <td></td>
+                {% endif %}
+
+                {% if model.admin_url and show_changelinks %}
+                  {% if model.view_only %}
+                    <td><a href="{{ model.admin_url }}" class="viewlink">{% translate 'View' %}</a></td>
+                  {% else %}
+                    <td><a href="{{ model.admin_url }}" class="changelink">{% translate 'Change' %}</a></td>
+                  {% endif %}
+                {% elif show_changelinks %}
+                  <td></td>
+                {% endif %}
+              </tr>
+                {% endif %}
+            {% endfor %}
+      {% endfor %}
+      </table>
+    </div>
+{% else %}
+  <p>{% translate 'You don’t have permission to view or edit anything.' %}</p>
+{% endif %}
