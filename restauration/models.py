@@ -4,9 +4,13 @@ from django.db.models import CharField, ForeignKey, CASCADE, DateTimeField, Floa
 from core.models import Service, TypeService
 from hebergement.models import Reservation, Chambre
 
+TYPE_REPAS = (
+    ('B','Petit déjeuner'),
+    ('L','Déjeuner'),
+    ('D','Diner'),
+)
 
-
-class Restaurant(Service):
+class Restaurant(models.Model):
     designation = CharField(max_length=25, verbose_name="désignation")
 
     def __str__(self):
@@ -17,9 +21,10 @@ class Restaurant(Service):
         super().save(*args, **kwargs)
 
 
-class ReservationRestaurant(models.Model):
+class ReservationRestaurant(Service):
     reservation = ForeignKey(Reservation, on_delete=CASCADE, verbose_name='réservation')
     restaurant = ForeignKey(Restaurant, on_delete=CASCADE, verbose_name='restaurant')
+    repas = CharField(max_length=1, choices=TYPE_REPAS, verbose_name='type de repas')
     montant = FloatField(default=0)
 
     def __str__(self):

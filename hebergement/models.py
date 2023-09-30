@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from django.db import models
 from django.db.models import CharField, IntegerField, PositiveSmallIntegerField, DateField, ForeignKey, CASCADE, \
-    TextField, BooleanField, DateTimeField, ManyToManyField, DO_NOTHING
+    TextField, BooleanField, DateTimeField, ManyToManyField, DO_NOTHING, Sum
 
 from core.models import Personne, Service, Classe, TypeService, Client
 
@@ -125,6 +125,16 @@ class Chambre(Service):
                 results.append({'pk': "#", 'status': 'L'})
 
         return results
+
+    @staticmethod
+    def nbr_chambres_libres():
+        return Chambre.objects.all().filter(status='L').count()
+
+    @staticmethod
+    def taux_occupation():
+        x=  Chambre.objects.all().exclude(status='L').count() / Chambre.objects.all().count()
+        print(x)
+        return x
 
 
 
