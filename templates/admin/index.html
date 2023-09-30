@@ -1,0 +1,19 @@
+{% extends 'admin/base_site.html' %}
+
+
+{% block content %}
+
+    <div style="display: flex">
+    <div>
+        <h1>Taux d'occupation</h1>
+        {{ taux_occupation.as_p }}
+    </div>
+    <div style="margin-left: 200px">
+        <h1>Nombre de chambres libres</h1>
+        {{ chambres_libres.as_p }}
+    </div>
+    <div style="margin-left: 200px">
+        <h1>Nombre de clients résidents</h1>
+        {{ clients_residents.as_p }}
+    </div>
+{% endblock %}
